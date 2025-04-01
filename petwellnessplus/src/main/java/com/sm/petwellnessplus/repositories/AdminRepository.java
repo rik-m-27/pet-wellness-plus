@@ -1,4 +1,8 @@
 package com.sm.petwellnessplus.repositories;
 
-public interface AdminRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.sm.petwellnessplus.models.Admin;
+
+public interface AdminRepository extends JpaRepository<Admin, Long> {
 }

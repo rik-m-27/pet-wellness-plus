@@ -1,5 +1,7 @@
 package com.sm.petwellnessplus.models;
 
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,4 +27,9 @@ public class User {
     private String password;
     private String userType;
     private boolean isEnable;
+    @Transient
+    private String specialization;
+    @Transient
+    List<Appointment> appointments;
+
 }

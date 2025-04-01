@@ -1,19 +1,65 @@
-package com.sm.petwellnessplus.services;
+package com.sm.petwellnessplus.services.user;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 
+import com.sm.petwellnessplus.dto.EntityConverter;
+import com.sm.petwellnessplus.dto.UserDto;
+import com.sm.petwellnessplus.exceptions.ResourceNotFoundException;
+import com.sm.petwellnessplus.factories.UserFactory;
 import com.sm.petwellnessplus.models.User;
 import com.sm.petwellnessplus.repositories.UserRepository;
+import com.sm.petwellnessplus.requests.RegistrationRequest;
+import com.sm.petwellnessplus.requests.UserUpdateRequest;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
-public class UserService {
-	
-	@Autowired
-	private UserRepository userRepository;
-	
-	public void add(User user) {
-		userRepository.save(user);
+@RequiredArgsConstructor
+public class UserService implements IUserService {
+
+	private final UserRepository userRepository;
+	private final UserFactory userFactory;
+	private final EntityConverter<User, UserDto> entityConverter;
+
+	@Override
+	public User register(RegistrationRequest request) {
+		return userFactory.createUser(request);
 	}
-	
+
+	@Override
+	public User update(Long userId, UserUpdateRequest request) {
+		User user = findById(userId);
+		user.setFirstName(request.getFirstName());
+		user.setLastName(request.getLastName());
+		user.setGender(request.getGender());
+		user.setPhoneNumber(request.getPhoneNumber());
+		user.setSpecialization(request.getSpecialization());
+
+		return userRepository.save(user);
+	}
+
+	@Override
+	public User findById(Long userId) {
+		return userRepository.findById(userId)
+				.orElseThrow(() -> new ResourceNotFoundException("User not found"));
+	}
+
+	@Override
+	public void delete(Long userId) {
+		userRepository.findById(userId)
+				.ifPresentOrElse(userRepository::delete, () -> {
+					throw new ResourceNotFoundException("User not found");
+				});
+	}
+
+	@Override
+	public List<UserDto> getAllUsers() {
+		List<User> users = userRepository.findAll();
+		List<UserDto> userDtos = users.stream().map(user -> entityConverter.mapEntityToDto(user, UserDto.class))
+				.collect(Collectors.toList());
+		return userDtos;
+	}
 }
