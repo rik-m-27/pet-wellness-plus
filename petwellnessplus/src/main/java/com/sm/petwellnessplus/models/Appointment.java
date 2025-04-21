@@ -3,7 +3,6 @@ package com.sm.petwellnessplus.models;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Random;
 
 import com.sm.petwellnessplus.enums.AppointmentStatus;
 

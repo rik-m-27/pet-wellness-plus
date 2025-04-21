@@ -15,6 +15,7 @@ import com.sm.petwellnessplus.repositories.UserRepository;
 import com.sm.petwellnessplus.requests.AppointmentUpdateRequest;
 import com.sm.petwellnessplus.utils.PwHelper;
 
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -47,17 +48,17 @@ public class AppointmentService implements IAppointmentService {
     @Override
     public Appointment updateAppointment(Long appointmentId, AppointmentUpdateRequest request) {
 
-        Appointment exisAppointment = getAppointmentById(appointmentId);
+        Appointment existAppointment = getAppointmentById(appointmentId);
 
-        if (!Objects.equals(AppointmentStatus.WAITING_FOR_APPROVAL, exisAppointment.getStatus())) {
+        if (!Objects.equals(AppointmentStatus.WAITING_FOR_APPROVAL, existAppointment.getStatus())) {
             throw new IllegalStateException("Sorry, this appointment can no longer be updated.");
         }
 
-        exisAppointment.setAppointmentDate(request.getAppointmentDate());
-        exisAppointment.setAppointmentTime(request.getAppointmentTime());
-        exisAppointment.setReason(request.getReason());
+        existAppointment.setAppointmentDate(request.getAppointmentDate());
+        existAppointment.setAppointmentTime(request.getAppointmentTime());
+        existAppointment.setReason(request.getReason());
 
-        return appointmentRepository.save(exisAppointment);
+        return appointmentRepository.save(existAppointment);
     }
 
     @Override

@@ -39,7 +39,7 @@ public class UserController {
 			User theUser = userService.register(request);
 			UserDto registeredUser = entityConverter.mapEntityToDto(theUser, UserDto.class);
 			return ResponseEntity.status(HttpStatus.CREATED)
-					.body(new ApiResponse(FeedBackMessage.SUCCESS, registeredUser));
+					.body(new ApiResponse(FeedBackMessage.USER_CREATE_SUCCESS, registeredUser));
 		} catch (UserAlreadyExistsException uex) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse(uex.getMessage(), null));
 		} catch (Exception ex) {
@@ -54,7 +54,7 @@ public class UserController {
 			User theUser = userService.update(userId, request);
 			UserDto updatedUser = entityConverter.mapEntityToDto(theUser, UserDto.class);
 			return ResponseEntity.status(HttpStatus.OK)
-					.body(new ApiResponse(FeedBackMessage.UPDATE_SUCCESS, updatedUser));
+					.body(new ApiResponse(FeedBackMessage.USER_UPDATE_SUCCESS, updatedUser));
 		} catch (ResourceNotFoundException rnfex) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body(new ApiResponse(rnfex.getMessage(), null));
@@ -70,7 +70,7 @@ public class UserController {
 			User theUser = userService.findById(userId);
 			UserDto fetchedUser = entityConverter.mapEntityToDto(theUser, UserDto.class);
 			return ResponseEntity.status(HttpStatus.OK)
-					.body(new ApiResponse(FeedBackMessage.FOUND, fetchedUser));
+					.body(new ApiResponse(FeedBackMessage.USER_FOUND, fetchedUser));
 
 		} catch (ResourceNotFoundException rnfex) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -86,7 +86,7 @@ public class UserController {
 		try {
 			userService.delete(userId);
 			return ResponseEntity.status(HttpStatus.OK)
-					.body(new ApiResponse(FeedBackMessage.DELETE_SUCCESS, null));
+					.body(new ApiResponse(FeedBackMessage.USER_DELETE_SUCCESS, null));
 		} catch (ResourceNotFoundException rnfex) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body(new ApiResponse(rnfex.getMessage(), null));
@@ -100,7 +100,7 @@ public class UserController {
 	public ResponseEntity<ApiResponse> getAllUsers() {
 		try {
 			return ResponseEntity.status(HttpStatus.FOUND)
-					.body(new ApiResponse(FeedBackMessage.FOUND, userService.getAllUsers()));
+					.body(new ApiResponse(FeedBackMessage.USER_FOUND, userService.getAllUsers()));
 		} catch (Exception ex) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body(new ApiResponse(ex.getMessage(), null));
