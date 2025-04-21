@@ -74,7 +74,7 @@ public class UserController {
 
 		} catch (ResourceNotFoundException rnfex) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body(new ApiResponse(rnfex.getMessage(), null));
+					.body(new ApiResponse(FeedBackMessage.USER_NOT_FOUND, null));
 		} catch (Exception ex) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body(new ApiResponse(ex.getMessage(), null));
@@ -89,7 +89,7 @@ public class UserController {
 					.body(new ApiResponse(FeedBackMessage.USER_DELETE_SUCCESS, null));
 		} catch (ResourceNotFoundException rnfex) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body(new ApiResponse(rnfex.getMessage(), null));
+					.body(new ApiResponse(FeedBackMessage.USER_NOT_FOUND, null));
 		} catch (Exception ex) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body(new ApiResponse(ex.getMessage(), null));

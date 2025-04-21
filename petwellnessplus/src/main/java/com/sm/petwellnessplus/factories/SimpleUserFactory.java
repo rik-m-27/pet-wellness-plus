@@ -27,7 +27,7 @@ public class SimpleUserFactory implements UserFactory {
 		System.out.println("\n\n\n" + registrationRequest.toString() + "\n\n\n");
 
 		switch (registrationRequest.getUserType()) {
-			case "VET":
+			case "VETERINARIAN":
 				return veterinarianFactory.createVeterinarian(registrationRequest);
 			case "PATIENT":
 				return patientFactory.createPatient(registrationRequest);

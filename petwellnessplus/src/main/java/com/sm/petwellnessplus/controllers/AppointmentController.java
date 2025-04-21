@@ -31,7 +31,7 @@ public class AppointmentController {
 
     private final AppointmentService appointmentService;
 
-    @GetMapping(UrlMapping.ALL)
+    @GetMapping(UrlMapping.GET_ALL_APPOINTMENTS)
     public ResponseEntity<ApiResponse> getAllAppointments() {
         try {
             List<Appointment> appointments = appointmentService.getAllAppointments();

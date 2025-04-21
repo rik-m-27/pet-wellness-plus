@@ -1,40 +1,45 @@
 package com.sm.petwellnessplus.models;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.sm.petwellnessplus.enums.AppointmentStatus;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import com.sm.petwellnessplus.utils.PwConstraints;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties({"patient","veterinarian"})
 public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String reason;
+
+    @JsonFormat(pattern = PwConstraints.DATE_FORMAT)
     private LocalDate appointmentDate;
+
+    @JsonFormat(pattern = PwConstraints.TIME_FORMAT)
     private LocalTime appointmentTime;
+    @Setter
     private String appointmentNo;
-    private LocalDate createdDate;
-    private LocalTime createdTime;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
     @Enumerated(EnumType.STRING)
     private AppointmentStatus status;
@@ -46,6 +51,9 @@ public class Appointment {
     @JoinColumn(name = "recipient")
     @ManyToOne(fetch = FetchType.LAZY)
     private User veterinarian;
+
+    @OneToMany(mappedBy = "appointment", cascade = CascadeType.ALL)
+    private List<Pet> pets;
 
     public void addPatient(User sender) {
         this.setPatient(sender);
@@ -63,7 +71,4 @@ public class Appointment {
         recipient.getAppointments().add(this);
     }
 
-    public void setAppointmentNo(String appointmentNo) {
-        this.appointmentNo = appointmentNo;
-    }
 }
