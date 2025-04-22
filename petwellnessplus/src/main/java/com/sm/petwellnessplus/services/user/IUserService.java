@@ -8,13 +8,13 @@ import com.sm.petwellnessplus.requests.RegistrationRequest;
 import com.sm.petwellnessplus.requests.UserUpdateRequest;
 
 public interface IUserService {
-    public User register(RegistrationRequest request);
+    public User registerUser(RegistrationRequest request);
 
-    public User update(Long UserId, UserUpdateRequest request);
+    public User updateUser(Long UserId, UserUpdateRequest request);
 
-    public User findById(Long userId);
+    public User getUserById(Long userId);
 
-    public void delete(Long userId);
+    public void deleteUser(Long userId);
 
     public List<UserDto> getAllUsers();
 }

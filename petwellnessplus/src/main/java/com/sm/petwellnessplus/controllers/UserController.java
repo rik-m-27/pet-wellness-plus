@@ -36,7 +36,7 @@ public class UserController {
 	@PostMapping(UrlMapping.REGISTER_USER)
 	public ResponseEntity<ApiResponse> register(@RequestBody RegistrationRequest request) {
 		try {
-			User theUser = userService.register(request);
+			User theUser = userService.registerUser(request);
 			UserDto registeredUser = entityConverter.mapEntityToDto(theUser, UserDto.class);
 			return ResponseEntity.status(HttpStatus.CREATED)
 					.body(new ApiResponse(FeedBackMessage.USER_CREATE_SUCCESS, registeredUser));
@@ -51,7 +51,7 @@ public class UserController {
 	@PutMapping(UrlMapping.UPDATE_USER)
 	public ResponseEntity<ApiResponse> update(@PathVariable Long userId, @RequestBody UserUpdateRequest request) {
 		try {
-			User theUser = userService.update(userId, request);
+			User theUser = userService.updateUser(userId, request);
 			UserDto updatedUser = entityConverter.mapEntityToDto(theUser, UserDto.class);
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new ApiResponse(FeedBackMessage.USER_UPDATE_SUCCESS, updatedUser));
@@ -67,7 +67,7 @@ public class UserController {
 	@GetMapping(UrlMapping.GET_USER_BY_ID)
 	public ResponseEntity<ApiResponse> findById(@PathVariable Long userId) {
 		try {
-			User theUser = userService.findById(userId);
+			User theUser = userService.getUserById(userId);
 			UserDto fetchedUser = entityConverter.mapEntityToDto(theUser, UserDto.class);
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new ApiResponse(FeedBackMessage.USER_FOUND, fetchedUser));
@@ -84,7 +84,7 @@ public class UserController {
 	@DeleteMapping(UrlMapping.DELETE_USER_BY_ID)
 	public ResponseEntity<ApiResponse> delete(@PathVariable Long userId) {
 		try {
-			userService.delete(userId);
+			userService.deleteUser(userId);
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new ApiResponse(FeedBackMessage.USER_DELETE_SUCCESS, null));
 		} catch (ResourceNotFoundException rnfex) {

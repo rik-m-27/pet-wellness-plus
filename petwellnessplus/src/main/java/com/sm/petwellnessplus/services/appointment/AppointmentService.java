@@ -4,6 +4,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.sm.petwellnessplus.models.Pet;
+import com.sm.petwellnessplus.repositories.PetRepository;
+import com.sm.petwellnessplus.requests.BookAppointmentRequest;
+import com.sm.petwellnessplus.services.pet.IPetService;
+import com.sm.petwellnessplus.services.user.IUserService;
+import com.sm.petwellnessplus.utils.FeedBackMessage;
 import org.springframework.stereotype.Service;
 
 import com.sm.petwellnessplus.enums.AppointmentStatus;
@@ -11,33 +17,43 @@ import com.sm.petwellnessplus.exceptions.ResourceNotFoundException;
 import com.sm.petwellnessplus.models.Appointment;
 import com.sm.petwellnessplus.models.User;
 import com.sm.petwellnessplus.repositories.AppointmentRepository;
-import com.sm.petwellnessplus.repositories.UserRepository;
 import com.sm.petwellnessplus.requests.AppointmentUpdateRequest;
 import com.sm.petwellnessplus.utils.PwHelper;
 
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class AppointmentService implements IAppointmentService {
 
     private final AppointmentRepository appointmentRepository;
-    private final UserRepository userRepository;
+    private final IUserService userService;
+    private final IPetService petService;
 
+    @Transactional
     @Override
-    public Appointment createAppointment(Appointment appointment, Long senderId, Long recipientId) {
-        Optional<User> sender = userRepository.findById(senderId);
-        Optional<User> recipient = userRepository.findById(recipientId);
+    public Appointment createAppointment(BookAppointmentRequest appointmentRequest, Long senderId, Long recipientId) {
+            try{
+                User sender = userService.getUserById(senderId);
+                User recipient = userService.getUserById(recipientId);
 
-        if (sender.isPresent() && recipient.isPresent()) {
-            appointment.addPatient(sender.get());
-            appointment.addVeterinarian(recipient.get());
-            appointment.setAppointmentNo(PwHelper.generateAppointmentNo());
-            appointment.setStatus(AppointmentStatus.WAITING_FOR_APPROVAL);
-            return appointmentRepository.save(appointment);
-        }
-        throw new ResourceNotFoundException("Sender or recipient not found");
+                Appointment appointment = appointmentRequest.getAppointment();
+                List<Pet> pets = appointmentRequest.getPets();
+                pets.forEach(pet -> pet.setAppointment(appointment));
+                List<Pet> savedPets = petService.savePetsForAppointment(pets);
+                appointment.setPets(savedPets);
+
+                appointment.addPatient(sender);
+                appointment.addVeterinarian(recipient);
+                appointment.setAppointmentNo(PwHelper.generateAppointmentNo());
+                appointment.setStatus(AppointmentStatus.WAITING_FOR_APPROVAL);
+                return appointmentRepository.save(appointment);
+            }catch (ResourceNotFoundException rnfex){
+                throw new ResourceNotFoundException(FeedBackMessage.SENDER_RECIPIENT_NOT_FOUND);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
     }
 
     @Override
@@ -51,7 +67,7 @@ public class AppointmentService implements IAppointmentService {
         Appointment existAppointment = getAppointmentById(appointmentId);
 
         if (!Objects.equals(AppointmentStatus.WAITING_FOR_APPROVAL, existAppointment.getStatus())) {
-            throw new IllegalStateException("Sorry, this appointment can no longer be updated.");
+            throw new IllegalStateException(FeedBackMessage.ALREADY_APPROVED);
         }
 
         existAppointment.setAppointmentDate(request.getAppointmentDate());
@@ -64,21 +80,21 @@ public class AppointmentService implements IAppointmentService {
     @Override
     public void deleteAppointment(Long appointmentId) {
         appointmentRepository.findById(appointmentId)
-                .ifPresentOrElse(appointment -> appointmentRepository.delete(appointment), () -> {
-                    throw new ResourceNotFoundException("Appointment not found");
+                .ifPresentOrElse(appointmentRepository::delete, () -> {
+                    throw new ResourceNotFoundException(FeedBackMessage.APPOINTMENT_NOT_FOUND);
                 });
     }
 
     @Override
     public Appointment getAppointmentById(Long appointmentId) {
         return appointmentRepository.findById(appointmentId)
-                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(FeedBackMessage.APPOINTMENT_NOT_FOUND));
     }
 
     @Override
     public Appointment getAppointmentByNo(String appointmentNo) {
         return appointmentRepository.findByAppointmentNo(appointmentNo)
-                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(FeedBackMessage.APPOINTMENT_NOT_FOUND));
     }
 
 }

@@ -2,6 +2,7 @@ package com.sm.petwellnessplus.controllers;
 
 import java.util.List;
 
+import com.sm.petwellnessplus.requests.BookAppointmentRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -37,19 +38,19 @@ public class AppointmentController {
             List<Appointment> appointments = appointmentService.getAllAppointments();
             return ResponseEntity.status(HttpStatus.FOUND)
                     .body(new ApiResponse(FeedBackMessage.APPOINTMENTS_FOUND, appointments));
-        } catch (ResourceNotFoundException e) {
+        } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse(FeedBackMessage.APPOINTMENTS_NOT_FOUND, null));
+                    .body(new ApiResponse(ex.getMessage(), null));
         }
     }
 
     @PostMapping(UrlMapping.CREATE_APPOINTMENT)
-    public ResponseEntity<ApiResponse> bookAppointentment(@RequestBody Appointment appointment,
+    public ResponseEntity<ApiResponse> bookAppointentment(@RequestBody BookAppointmentRequest appointmentRequest,
             @RequestParam Long senderId,
             @RequestParam Long recipientId) {
         try {
-            Appointment theAppointment = appointmentService.createAppointment(appointment, senderId, recipientId);
-            return ResponseEntity.status(HttpStatus.FOUND)
+            Appointment theAppointment = appointmentService.createAppointment(appointmentRequest, senderId, recipientId);
+            return ResponseEntity.status(HttpStatus.CREATED)
                     .body(new ApiResponse(FeedBackMessage.APPOINTMENT_CREATE_SUCCESS, theAppointment));
         } catch (ResourceNotFoundException rnfex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -105,7 +106,7 @@ public class AppointmentController {
         }
     }
 
-    @PutMapping(UrlMapping.UPDATE_APPOINMENT)
+    @PutMapping(UrlMapping.UPDATE_APPOINTMENT)
     public ResponseEntity<ApiResponse> updateAppointmentById(@PathVariable Long appointmentId,
             @RequestBody AppointmentUpdateRequest request) {
         try {

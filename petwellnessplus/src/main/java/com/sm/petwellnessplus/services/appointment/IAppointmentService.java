@@ -4,9 +4,10 @@ import java.util.List;
 
 import com.sm.petwellnessplus.models.Appointment;
 import com.sm.petwellnessplus.requests.AppointmentUpdateRequest;
+import com.sm.petwellnessplus.requests.BookAppointmentRequest;
 
 public interface IAppointmentService {
-    Appointment createAppointment(Appointment appointment, Long sender, Long receiver);
+    Appointment createAppointment(BookAppointmentRequest appointmentRequest, Long sender, Long receiver);
 
     List<Appointment> getAllAppointments();
 

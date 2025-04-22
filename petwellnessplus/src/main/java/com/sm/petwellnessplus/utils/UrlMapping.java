@@ -17,11 +17,19 @@ public class UrlMapping {
     /*==================================Start Appointment APIs========================================*/
     public static final String APPOINTMENT = API + "/appointments";
     public static final String CREATE_APPOINTMENT = "/book-appointment";
-    public static final String UPDATE_APPOINMENT = "/update/{appointmentId}";
+    public static final String UPDATE_APPOINTMENT = "/update/{appointmentId}";
     public static final String GET_APPOINTMENT_BY_ID = "/id/{appointmentId}";
     public static final String DELETE_APPOINTMENT_BY_ID = "/delete/{appointmentId}";
     public static final String GET_ALL_APPOINTMENTS = "/all-appointments";
     public static final String GET_APPOINTMENT_BY_NO = "/no/{appointmentNo}";
     /*==================================End Appointment APIs========================================*/
+
+    /*==================================Start Pet APIs========================================*/
+    public static final String PET = API + "/pets";
+    public static final String SAVE_PETS = "/save-pets";
+    public static final String GET_PET_BY_ID = "/id/{petId}";
+    public static final String DELETE_PET_BY_ID = "/delete/{petId}";
+    public static final String UPDATE_PET = "/update/{petId}";
+    /*===================================End Pet APIS================================================*/
 
 }

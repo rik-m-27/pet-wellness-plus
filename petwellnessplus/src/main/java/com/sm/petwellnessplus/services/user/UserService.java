@@ -25,13 +25,13 @@ public class UserService implements IUserService {
 	private final EntityConverter<User, UserDto> entityConverter;
 
 	@Override
-	public User register(RegistrationRequest request) {
+	public User registerUser(RegistrationRequest request) {
 		return userFactory.createUser(request);
 	}
 
 	@Override
-	public User update(Long userId, UserUpdateRequest request) {
-		User user = findById(userId);
+	public User updateUser(Long userId, UserUpdateRequest request) {
+		User user = getUserById(userId);
 		user.setFirstName(request.getFirstName());
 		user.setLastName(request.getLastName());
 		user.setGender(request.getGender());
@@ -42,13 +42,13 @@ public class UserService implements IUserService {
 	}
 
 	@Override
-	public User findById(Long userId) {
+	public User getUserById(Long userId) {
 		return userRepository.findById(userId)
 				.orElseThrow(() -> new ResourceNotFoundException("User not found"));
 	}
 
 	@Override
-	public void delete(Long userId) {
+	public void deleteUser(Long userId) {
 		userRepository.findById(userId)
 				.ifPresentOrElse(userRepository::delete, () -> {
 					throw new ResourceNotFoundException("User not found");
