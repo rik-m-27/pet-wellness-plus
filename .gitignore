@@ -1,0 +1,8 @@
+/.metadata/
+
+#ignore local Spring configs
+**/application-local.properties
+
+# Ignore any generated folders across all projects
+**/target/
+**/build/

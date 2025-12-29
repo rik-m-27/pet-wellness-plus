@@ -29,11 +29,16 @@ public class User {
     private String password;
     private String userType;
     private boolean isEnable;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
+
     @Transient
     private String specialization;
+
     @Transient
     List<Appointment> appointments;
 
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    private Photo photo;
 }

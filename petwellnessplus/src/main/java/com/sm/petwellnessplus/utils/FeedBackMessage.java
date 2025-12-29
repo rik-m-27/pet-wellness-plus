@@ -18,9 +18,16 @@ public class FeedBackMessage {
     public static final String SENDER_RECIPIENT_NOT_FOUND = "Sender or recipient not found";
 
     public static final String PET_FOUND = "Pet found";
-    public static final String PET_NOT_FOUND = "Pet Not found";
+    public static final String PET_NOT_FOUND = "Pet not found";
     public static final String PETS_CREATE_SUCCESS = "Pets created successfully";
     public static final String PET_UPDATE_SUCCESS = "Pet updated successfully";
     public static final String PET_DELETE_SUCCESS = "Pet deleted successfully";
 
+    public static final String PHOTO_FOUND = "Photo found";
+    public static final String PHOTO_NOT_FOUND = "Photo not found";
+    public static final String PHOTO_UPLOAD_SUCCESS = "Photo uploaded successfully";
+    public static final String PHOTO_UPDATE_SUCCESS = "Photo updated successfully";
+    public static final String PHOTO_DELETE_SUCCESS = "Photo deleted successfully";
+
+    public static final String SERVER_ERROR = "Internal Server Error";
 }

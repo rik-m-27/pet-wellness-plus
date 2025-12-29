@@ -1,11 +1,10 @@
 package com.sm.petwellnessplus.repositories;
 
+import com.sm.petwellnessplus.models.Photo;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import com.sm.petwellnessplus.models.Patient;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PatientRepository extends JpaRepository<Patient, Long> {
+public interface PhotoRepository extends JpaRepository<Photo, Long> {
 
 }
