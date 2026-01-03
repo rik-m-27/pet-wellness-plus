@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import com.petwellnessplus.config.JwtProperties;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
@@ -35,17 +36,12 @@ public class JwtService {
 				.compact();
 	}
 	
-	public String extractUsername(String token) {
+	public Claims parseClaims(String token) {
 		return Jwts.parser()
 				.verifyWith(getSigningKey())
 				.build()
 				.parseSignedClaims(token)
-				.getPayload()
-				.getSubject();
+				.getPayload();
 	}
 	
-	public boolean isTokenValid(String token, UserDetails userDetails) {
-		String username = extractUsername(token);
-		return userDetails.getUsername().equals(username);
-	}
 }

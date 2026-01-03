@@ -93,12 +93,26 @@
 		    <scope>runtime</scope>
 		</dependency>
 		<!--JWT dependencies end-->
+		
+		<!--Custom Configuration Properties-->
 		<dependency>
 		    <groupId>org.springframework.boot</groupId>
 		    <artifactId>spring-boot-configuration-processor</artifactId>
 		    <optional>true</optional>
 		</dependency>
-
+		
+		<!--fasterxml jackson start-->
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-databind</artifactId>
+		</dependency>
+		
+		<dependency>
+		    <groupId>com.fasterxml.jackson.datatype</groupId>
+		    <artifactId>jackson-datatype-jsr310</artifactId>
+		</dependency>
+		<!--fasterxml jackson end-->
+		
 	</dependencies>
 
 	<build>
