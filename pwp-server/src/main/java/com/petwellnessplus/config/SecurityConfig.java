@@ -18,16 +18,15 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.petwellnessplus.security.JwtAuthenticationFilter;
 
+import lombok.RequiredArgsConstructor;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-    }
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {

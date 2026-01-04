@@ -16,6 +16,7 @@ public class DataInitializer {
             if (roleRepo.count() == 0) {
                 roleRepo.save(new Role(null, "ADMIN"));
                 roleRepo.save(new Role(null, "DOCTOR"));
+                roleRepo.save(new Role(null, "USER"));
             }
         };
     }
