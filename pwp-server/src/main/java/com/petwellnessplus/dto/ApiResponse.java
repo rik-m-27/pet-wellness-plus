@@ -11,7 +11,10 @@ public class ApiResponse<T> {
     private int statusCode;
     private String message;
     private T data;
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "UTC")
+    @JsonFormat(
+	  pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'",
+	  timezone = "UTC"
+	)
     private OffsetDateTime dateTimeWithZone;
 
     private ApiResponse(int statusCode, String message, T data) {

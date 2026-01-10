@@ -1,5 +1,6 @@
 package com.petwellnessplus.config;
 
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,7 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.petwellnessplus.security.JwtAuthenticationFilter;
+import com.petwellnessplus.security.jwt.JwtAuthenticationFilter;
+import com.petwellnessplus.security.jwt.JwtProperties;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSecurity
 @EnableMethodSecurity
 @RequiredArgsConstructor
+@EnableConfigurationProperties(JwtProperties.class)
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -40,7 +43,8 @@ public class SecurityConfig {
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**").permitAll()
+        		.requestMatchers("/auth/logout").authenticated()
+        		.requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/admin/**").authenticated()
                 .requestMatchers("/doctor/**").authenticated()
                 .requestMatchers("/user/**").authenticated()

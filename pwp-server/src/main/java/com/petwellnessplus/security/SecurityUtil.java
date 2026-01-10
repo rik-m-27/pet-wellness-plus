@@ -1,4 +1,4 @@
-package com.petwellnessplus.utils;
+package com.petwellnessplus.security;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

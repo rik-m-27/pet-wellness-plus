@@ -1,4 +1,4 @@
-package com.petwellnessplus.security;
+package com.petwellnessplus.security.jwt;
 
 import java.io.IOException;
 import java.util.List;
@@ -7,12 +7,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petwellnessplus.dto.ApiResponse;
+import com.petwellnessplus.redis.RedisAuthService;
+import com.petwellnessplus.redis.RedisKeys;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -28,15 +29,8 @@ import lombok.RequiredArgsConstructor;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtService jwtService;
-	private final UserDetailsService userDetailsService;
 	private final ObjectMapper obejctMapper;
-
-//	public JwtAuthenticationFilter(JwtService jwtService, UserDetailsService userDetailsService,
-//			ObjectMapper objectMapper) {
-//		this.jwtService = jwtService;
-//		this.userDetailsService = userDetailsService;
-//		this.obejctMapper = objectMapper;
-//	}
+	private final RedisAuthService redisAuthService;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -53,16 +47,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 		try {
 			Claims claims = jwtService.parseClaims(token);
-//			String username = claims.getSubject();
-//
-//			UserDetails user = userDetailsService.loadUserByUsername(username);
 			
 			Long userId = claims.get("userId", Long.class);
-			@SuppressWarnings("unchecked")
-			List<String> roles = claims.get("roles", List.class);
+			String key = RedisKeys.AUTH_USER_PREFIX + userId;
+			
+			String tokenJti = claims.getId();
+			String redisJti = redisAuthService.getValue(key);
+			
+			if(redisJti == null || !tokenJti.equals(redisJti)) {
+				throw new JwtException("Token revoked or replaced");
+			}
+			
+			List<?> roles = claims.get("roles", List.class);
 
 			List<SimpleGrantedAuthority> authorities =
 			        roles.stream()
+			        	 .map(String.class::cast)
 			             .map(SimpleGrantedAuthority::new)
 			             .toList();
 
@@ -78,7 +78,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		} catch (ExpiredJwtException e) {
 			handleException(response, "Token has expired", HttpStatus.UNAUTHORIZED);
 		} catch (JwtException e) {
-			handleException(response, "Invalid token format or signature", HttpStatus.UNAUTHORIZED);
+			handleException(response, e.getMessage(), HttpStatus.UNAUTHORIZED);
 		} catch (Exception e) {
 			handleException(response, "Authentication failed: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}

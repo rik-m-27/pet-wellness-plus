@@ -113,6 +113,13 @@
 		</dependency>
 		<!--fasterxml jackson end-->
 		
+		<!--Redis start-->
+		<dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
+		<!--Redis end-->
+		
 	</dependencies>
 
 	<build>

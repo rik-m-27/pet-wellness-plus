@@ -16,14 +16,14 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class DoctorService {
 
 	private final UserRepository userRepository;
 	private final RoleRepository roleRepository;
 	private final PasswordEncoder passwordEncoder;
-	
+
 	@Transactional(rollbackFor = Exception.class)
-	public User signupUser(SignupRequest request) {
+	public User signupDoctor(SignupRequest request) {
 
 	    User user = new User();
 	    user.setUsername(request.getUsername());
@@ -32,17 +32,23 @@ public class UserService {
 
 	    User savedUser = userRepository.save(user);
 
-	    Role userRole = roleRepository.findByName("USER")
-	            .orElseThrow(() -> new IllegalStateException("ROLE_USER not found"));
+	    Role userRole = roleRepository.findByName("DOCTOR")
+	            .orElseThrow(() -> new IllegalStateException("ROLE_DOCTOR not found"));
 
 	    UserRole userRoleMapping = new UserRole();
 	    userRoleMapping.setUser(savedUser);
 	    userRoleMapping.setRole(userRole);
-	    userRoleMapping.setStatus(RoleStatus.ACTIVE);
+	    userRoleMapping.setStatus(RoleStatus.PENDING);
 
 	    savedUser.getUserRoles().add(userRoleMapping);
 
-	    return userRepository.save(savedUser);
+	    User theSavedser = userRepository.save(savedUser);
+	    
+	    // here we have to configure email part
+	    // which will send api end point like - POST /doctor/verification with token or otp based.
+	    // there it will be able to put documents,
+	    
+	    return theSavedser;
 	}
-
+	
 }
