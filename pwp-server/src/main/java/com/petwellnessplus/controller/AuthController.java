@@ -21,9 +21,9 @@ import com.petwellnessplus.dto.LoginRequest;
 import com.petwellnessplus.dto.SignupRequest;
 import com.petwellnessplus.model.User;
 import com.petwellnessplus.redis.RedisAuthService;
-import com.petwellnessplus.redis.RedisKeys;
 import com.petwellnessplus.security.CustomUserDetails;
-import com.petwellnessplus.security.jwt.JwtService;
+import com.petwellnessplus.security.SecurityConstants;
+import com.petwellnessplus.security.jwt.JwtUtils;
 import com.petwellnessplus.security.jwt.TokenBundle;
 import com.petwellnessplus.service.DoctorService;
 import com.petwellnessplus.service.UserService;
@@ -36,7 +36,7 @@ import lombok.RequiredArgsConstructor;
 public class AuthController {
 
 	private final AuthenticationManager authenticationManager;
-	private final JwtService jwtService;
+	private final JwtUtils jwtUtils;
 	private final UserService userService;
 	private final DoctorService doctorService;
 	private final RedisAuthService redisAuthService;
@@ -49,7 +49,7 @@ public class AuthController {
 	    }
 
 	    Long userId = (Long)authentication.getPrincipal();
-	    String key = RedisKeys.AUTH_USER_PREFIX + userId;
+	    String key = SecurityConstants.AUTH_USER_PREFIX + userId;
 	    
 	    redisAuthService.delete(key);
 
@@ -66,7 +66,7 @@ public class AuthController {
 			
 			CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 			
-			TokenBundle tokenBundle = jwtService.generateToken(userDetails);
+			TokenBundle tokenBundle = jwtUtils.generateToken(userDetails);
 			
 			long ttlMillis = tokenBundle.getExp() - System.currentTimeMillis();
 			
@@ -74,7 +74,7 @@ public class AuthController {
 				throw new IllegalStateException("Token generation failed");
 			}
 			
-			String key = RedisKeys.AUTH_USER_PREFIX + userDetails.getId();
+			String key = SecurityConstants.AUTH_USER_PREFIX + userDetails.getId();
 			
 			redisAuthService.store(key, tokenBundle.getJti(), Duration.ofMillis(ttlMillis));
 			

@@ -13,7 +13,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petwellnessplus.dto.ApiResponse;
 import com.petwellnessplus.redis.RedisAuthService;
-import com.petwellnessplus.redis.RedisKeys;
+import com.petwellnessplus.security.SecurityConstants;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -28,7 +28,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-	private final JwtService jwtService;
+	private final JwtUtils jwtUtils;
+	private final JwtProperties jwtProperties;
 	private final ObjectMapper obejctMapper;
 	private final RedisAuthService redisAuthService;
 
@@ -36,20 +37,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 
-		String authHeader = request.getHeader("Authorization");
+		String authHeader = request.getHeader(jwtProperties.getHeader());
 
-		if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+		if (authHeader == null || !authHeader.startsWith(jwtProperties.getPrefix())) {
 			filterChain.doFilter(request, response);
 			return;
 		}
 
-		String token = authHeader.substring(7);
+		String token = authHeader.substring(jwtProperties.getPrefix().length());
 
 		try {
-			Claims claims = jwtService.parseClaims(token);
+			Claims claims = jwtUtils.parseClaims(token);
 			
-			Long userId = claims.get("userId", Long.class);
-			String key = RedisKeys.AUTH_USER_PREFIX + userId;
+			Long userId = claims.get(SecurityConstants.CLAIM_USER_ID, Long.class);
+			String key = SecurityConstants.AUTH_USER_PREFIX + userId;
 			
 			String tokenJti = claims.getId();
 			String redisJti = redisAuthService.getValue(key);
@@ -58,11 +59,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				throw new JwtException("Token revoked or replaced");
 			}
 			
-			List<?> roles = claims.get("roles", List.class);
+			List<?> roles = claims.get(SecurityConstants.CLAIM_ROLES, List.class);
 
 			List<SimpleGrantedAuthority> authorities =
 			        roles.stream()
-			        	 .map(String.class::cast)
+			        	 .map(Object::toString)
 			             .map(SimpleGrantedAuthority::new)
 			             .toList();
 

@@ -19,12 +19,12 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class JwtService {
+public class JwtUtils {
 
 	private final JwtProperties jwtProperties;
 	
 	private SecretKey getSigningKey() {
-		return Keys.hmacShaKeyFor(jwtProperties.getToken().getBytes(StandardCharsets.UTF_8));
+		return Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes(StandardCharsets.UTF_8));
 	}
 	
 	public TokenBundle generateToken(CustomUserDetails userDetails) {
