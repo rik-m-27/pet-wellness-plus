@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.petwellnessplus.dto.ApiResponse;
+import com.petwellnessplus.dto.AppResponse;
 import com.petwellnessplus.dto.LoginRequest;
 import com.petwellnessplus.dto.SignupRequest;
 import com.petwellnessplus.model.User;
@@ -41,6 +41,7 @@ public class AuthController {
 	private final DoctorService doctorService;
 	private final RedisAuthService redisAuthService;
 
+
 	@PostMapping("/logout")
 	public ResponseEntity<String> logout(Authentication authentication){
 		
@@ -57,7 +58,7 @@ public class AuthController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<ApiResponse<String>> login(@RequestBody LoginRequest loginRequest) {
+	public ResponseEntity<AppResponse<String>> login(@RequestBody LoginRequest loginRequest) {
 
 		try {
 			
@@ -78,20 +79,20 @@ public class AuthController {
 			
 			redisAuthService.store(key, tokenBundle.getJti(), Duration.ofMillis(ttlMillis));
 			
-			return ResponseEntity.ok(ApiResponse.success(HttpStatus.OK, tokenBundle.getToken()));
+			return ResponseEntity.ok(AppResponse.success(HttpStatus.OK, tokenBundle.getToken()));
 			
 		} catch (InternalAuthenticationServiceException ex) {
 		    Throwable cause = ex.getCause();
 		    if (cause instanceof InsufficientAuthenticationException) {
 		        return ResponseEntity.status(HttpStatus.FORBIDDEN)
-		                .body(ApiResponse.error(HttpStatus.FORBIDDEN, cause.getMessage()));
+		                .body(AppResponse.error(HttpStatus.FORBIDDEN, cause.getMessage()));
 		    }
 		    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-		            .body(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage()));
+		            .body(AppResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage()));
 
 		} catch (BadCredentialsException | UsernameNotFoundException ex) {
 		    return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-		            .body(ApiResponse.error(HttpStatus.UNAUTHORIZED, "Invalid username or password"));
+		            .body(AppResponse.error(HttpStatus.UNAUTHORIZED, "Invalid username or password"));
 		}
 	}
 

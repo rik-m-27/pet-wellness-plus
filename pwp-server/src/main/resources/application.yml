@@ -33,7 +33,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
     open-in-view: false
     properties:
       hibernate:
@@ -48,11 +48,45 @@ spring:
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
 
+#===============================
+# Make console clean
+#===============================
+  main:
+    banner-mode: log
+
 # ===============================
 # Json Web Token
 # ===============================
 jwt:
-  secret: ${JWT_TOKEN}
+  secret: JWT_TOKEN
   expiration: 1h
   header: Authorization
   prefix: "Bearer "
+
+# ===============================
+# logger configuration
+# ===============================
+
+#logging:
+#  file:
+#    name: logs/pet-wellness-plus.log
+#
+#  threshold:
+#    console: OFF
+#
+#  level:
+#    root: INFO
+#    "[com.petwellnessplus]": DEBUG
+#  
+#  pattern:
+#    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{40} - %msg%n"
+#
+#  logback:
+#    rollingpolicy:
+#      max-file-size: 10MB
+#      total-size-cap: 100MB
+
+logging:
+  level:
+    "[org.hibernate.SQL]": DEBUG
+    "[org.hibernate.orm.jdbc.bind]": TRACE

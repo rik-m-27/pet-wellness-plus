@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.petwellnessplus.dto.ApiResponse;
+import com.petwellnessplus.dto.AppResponse;
 import com.petwellnessplus.redis.RedisAuthService;
 import com.petwellnessplus.security.SecurityConstants;
 
@@ -91,7 +91,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		response.setStatus(status.value());
 		response.setContentType("application/json");
 
-		ApiResponse<String> apiResponse = ApiResponse.error(status, message);
+		AppResponse<String> apiResponse = AppResponse.error(status, message);
 		String jsonResponse = obejctMapper.writeValueAsString(apiResponse);
 
 		response.getWriter().write(jsonResponse);
