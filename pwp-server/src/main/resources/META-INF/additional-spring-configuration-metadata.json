@@ -1,0 +1,29 @@
+{
+  "properties": [
+    {
+      "name": "jwt.secret",
+      "type": "java.lang.String",
+      "description": "Base64 encoded secret key for signing JWTs."
+    },
+    {
+      "name": "jwt.expiration",
+      "type": "java.time.Duration",
+      "description": "Token validity period (e.g., 1h, 30m, 86400000)."
+    },
+    {
+      "name": "jwt.header",
+      "type": "java.lang.String",
+      "description": "The HTTP header name used to send the token (e.g., Authorization)."
+    },
+    {
+      "name": "jwt.prefix",
+      "type": "java.lang.String",
+      "description": "The prefix before the token string (e.g., 'Bearer ')."
+    },
+    {
+      "name": "spring.h2.console.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable the H2 console."
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+/.metadata/
+
+#ignore local Spring configs
+**/application-local.yml
+
+#ignore test Spring cofig too.
+**/application-test-local.yml
+
+# Ignore any generated folders across all projects
+**/target/
+**/build/
+
+**/logs/
